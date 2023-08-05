@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculate Maximum Boxes on Pallet</title>
+</head>
+<body>
+    <h1>Calculate Maximum Boxes on Pallet</h1>
+    <form id="boxForm">
+        <label for="palletLength">Pallet Length (cm):</label>
+        <input type="number" id="palletLength" required><br>  <!--type="number" used to allow users input only numbers and it tells brousers which keyboard open on phones. This type="number" doesn't make type of this input as a int, it's still string. To make it integer and be able to make calculation I have to make it int. There is 2 ways to do this: by JS parsetInt or .valueAsNumber  -->
+        
+        <label for="palletWidth">Pallet Width (cm):</label>
+        <input type="number" id="palletWidth" required><br>
+
+        <label for="palletHeight">Pallet Height (cm):</label>
+        <input type="number" id="palletHeight" required><br>
+
+        <label for="boxLength">Box Length (cm):</label>
+        <input type="number" id="boxLength" required><br>
+
+        <label for="boxWidth">Box Width (cm):</label>
+        <input type="number" id="boxWidth" required><br>
+
+        <label for="boxHeight">Box Height (cm):</label>
+        <input type="number" id="boxHeight" required><br>
+
+        <button type="button" class="calculateBtn">Calculate</button>
+    </form>
+
+    <p id="result"></p>
+    <p id="instructions"></p>
+    <p id="freeHeight"></p>
+    <p id="test"></p>
+    <p id="test2"></p>
+
+    <script>
+      const calculateBtn = document.querySelector(".calculateBtn");
+      calculateBtn.addEventListener("click", calculateMaxBoxes);
+
+      function calculateMaxBoxes() {
+          const palletLength = parseInt(document.getElementById('palletLength').value);
+          const palletWidth = parseInt(document.getElementById('palletWidth').value);
+          const palletHeight = parseInt(document.getElementById('palletHeight').value);
+          const boxLength = parseInt(document.getElementById('boxLength').value);
+          const boxWidth = parseInt(document.getElementById('boxWidth').value);
+          const boxHeight = parseInt(document.getElementById('boxHeight').value);
+
+          const allPossibleBoxConfigurations = [
+              { orientation: "Box Length on Pallet Length, Box Width on Pallet Width", length: boxLength, width: boxWidth, height: boxHeight },
+              { orientation: "Box Length on Pallet Length, Box Width on Pallet Height", length: boxLength, width: boxHeight, height: boxWidth },
+              { orientation: "Box Width on Pallet Length, Box Length on Pallet Width", length: boxWidth, width: boxLength, height: boxHeight },
+              { orientation: "Box Width on Pallet Length, Box Length on Pallet Height", length: boxWidth, width: boxHeight, height: boxLength },
+              { orientation: "Box Height on Pallet Length, Box Width on Pallet Width", length: boxHeight, width: boxWidth, height: boxLength },
+              { orientation: "Box Height on Pallet Length, Box Width on Pallet Height", length: boxHeight, width: boxLength, height: boxWidth },
+          ];
+
+          let maxBoxesTotal = 0;
+          let bestOrientation = "";
+          let fullHeight = 0;
+
+          for (const { orientation, length, width, height } of allPossibleBoxConfigurations) {
+              const maxBoxesOnFloor = Math.floor(palletLength / length) * Math.floor(palletWidth / width);
+              const maxLayers = Math.floor(palletHeight / height);
+              const maxBoxes = maxBoxesOnFloor * maxLayers;
+
+              if (maxBoxes > maxBoxesTotal) {
+                  maxBoxesTotal = maxBoxes;
+                  bestOrientation = orientation;
+                  fullHeight = maxLayers * height; // Calculate the full height based on the best orientation found
+              }
+          }
+
+          const freeHeight = palletHeight - fullHeight; // Calculate the free height
+          console.log (freeHeight);
+
+          calculateMaxBoxesToFreeHeight(freeHeight);
+    
+
+          //-----------The second function
+
+          function calculateMaxBoxesToFreeHeight(freeHeight) {          
+
+          const palletLength = parseInt(document.getElementById('palletLength').value);
+          const palletWidth = parseInt(document.getElementById('palletWidth').value);
+          const palletHeight = freeHeight;
+          const boxLength = parseInt(document.getElementById('boxLength').value);
+          const boxWidth = parseInt(document.getElementById('boxWidth').value);
+          const boxHeight = parseInt(document.getElementById('boxHeight').value);
+
+          const allPossibleBoxConfigurations = [
+              { orientation: "Box Length on Pallet Length, Box Width on Pallet Width", length: boxLength, width: boxWidth, height: boxHeight },
+              { orientation: "Box Length on Pallet Length, Box Width on Pallet Height", length: boxLength, width: boxHeight, height: boxWidth },
+              { orientation: "Box Width on Pallet Length, Box Length on Pallet Width", length: boxWidth, width: boxLength, height: boxHeight },
+              { orientation: "Box Width on Pallet Length, Box Length on Pallet Height", length: boxWidth, width: boxHeight, height: boxLength },
+              { orientation: "Box Height on Pallet Length, Box Width on Pallet Width", length: boxHeight, width: boxWidth, height: boxLength },
+              { orientation: "Box Height on Pallet Length, Box Width on Pallet Height", length: boxHeight, width: boxLength, height: boxWidth },
+          ];
+
+          let maxBoxesTotalForFreeHeight = 0;
+          let bestOrientation = "";
+          let fullHeight = 0;
+
+          for (const { orientation, length, width, height } of allPossibleBoxConfigurations) {
+              const maxBoxesOnFloor = Math.floor(palletLength / length) * Math.floor(palletWidth / width);
+              const maxLayers = Math.floor(palletHeight / height);
+              const maxBoxes = maxBoxesOnFloor * maxLayers;
+
+              if (maxBoxes > maxBoxesTotalForFreeHeight) {
+                  maxBoxesTotalForFreeHeight = maxBoxes;
+                  bestOrientation = orientation;
+                  fullHeight = maxLayers * height; // Calculate the full height based on the best orientation found
+              }
+          }
+
+          
+          max1 = maxBoxesTotal;
+          max2 = maxBoxesTotalForFreeHeight;
+          var sum = max1 + max2;
+          document.getElementById('result').innerText = `Maximum number of boxes on pallet: ${sum}`;
+          }
+        }
+
+        
+
+        
+
+
+
+      </script>
+</body>
+</html>
